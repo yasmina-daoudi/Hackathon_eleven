@@ -4,7 +4,7 @@ Our goal is to analyze Airlines Customers Satisfaction using NLP Sentiment Analy
 
 The major steps are the following :
 
-Web Scrapping
-Text Processing
-Models
-Recommendations
+1. Web Scrapping
+2. Text Processing
+3. Models
+4. Recommendations
