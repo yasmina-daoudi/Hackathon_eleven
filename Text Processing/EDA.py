@@ -15,6 +15,7 @@ from gensim.utils import simple_preprocess
 from gensim.parsing.preprocessing import STOPWORDS
 import nltk
 from nltk.stem import WordNetLemmatizer
+from nltk.corpus import stopwords
 import wordcloud
 
 # Loading of the reviews file
@@ -23,6 +24,9 @@ file_path = "reviews_output.csv"
 # Initialiazing a Language Detector Pipeline in case reviews not in English
 nlp = spacy.load("en_core_web_sm")
 nlp.add_pipe(LanguageDetector(), name="language_detector", last=True)
+
+# Initialiazing the StopWords
+stop_words = stopwords.words('english')
 
 # Definition of Functions used in our pipeline
 
