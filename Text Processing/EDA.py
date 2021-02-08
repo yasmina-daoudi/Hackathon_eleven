@@ -26,7 +26,8 @@ nlp = spacy.load("en_core_web_sm")
 nlp.add_pipe(LanguageDetector(), name="language_detector", last=True)
 
 # Initialiazing the StopWords
-stop_words = stopwords.words('english')
+stop_stopwords = list(set(STOPWORDS))
+stop_stopwords.extend(['I','i', 'like', 'good', 'great', 'love'])
 
 # Definition of Functions used in our pipeline
 
@@ -59,10 +60,10 @@ def make_trigrams(texts):
     return [trigram_model[bigram_model[doc]] for doc in texts]
 
 
-def lemmatization(bagofwords):
+def lemmatization(bagofwords, allowed_postags=['NOUN']):
     # Use of Spacy for Lemmatization
     lemma_docu = nlp(" ".join(bagofwords))
-    lemma_text = [token.text if '_' in token.text else token.lemma_ for token in lemma_docu if token.lemma_ != '-PRON-']
+    lemma_text = [token.text if '_' in token.text else token.lemma_ if token.pos_ in allowed_postags else '' for token in lemma_docu]
     return lemma_text
 
 
