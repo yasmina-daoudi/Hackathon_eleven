@@ -21,4 +21,4 @@ Output:
 
 Segmentation Axes:
 	1. Class: Business / Economy
-  2. Flight Duration: Long-haul / Short-haul
+	2. Flight Duration: Long-haul / Short-haul
