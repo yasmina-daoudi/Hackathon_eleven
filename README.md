@@ -8,3 +8,17 @@ The major steps are the following :
 2. Text Processing
 3. Models
 4. Recommendations
+
+
+
+Data:
+	- Global market
+	- English-text reviews
+
+Output:
+	- Equipment (main business)
+	- Other areas of improvement (can sell consultancy services based on insights from data)
+
+Segmentation Axes:
+	1. Class: Business / Economy
+  2. Flight Duration: Long-haul / Short-haul
