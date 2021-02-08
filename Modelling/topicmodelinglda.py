@@ -15,6 +15,8 @@ import pathlib
 
 # We won't use TF-IDF as "LDA is a probabilistic model that tries to estimate probability distributions for topics in documents and words in topics."
 
+# Function for finding the optimal number of topics for LDA
+
 
 def compute_coherence_values(dictionary, corpus, texts, limit, start=2, step=3):
     """
