@@ -1,0 +1,6 @@
+Sources for Customers Reviews :
+- TripAdvisor
+- SkyTrax
+- Twitter
+- Flight Report
+- SeatGuru
