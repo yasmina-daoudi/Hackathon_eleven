@@ -92,7 +92,6 @@ if __name__ == '__main__':
     limit = 80
     start = 2
     step = 6
-    
     model_list, coherence_values = compute_coherence_values(dictionary=dict3grams, corpus=corpus3grams, texts=list(df_LDA['3grams']), start=start, limit=limit, step=step)
     # Print the coherence scores & plot coherence against number of topics
     for m, cv in zip(range(start, limit, step), coherence_values):
@@ -102,10 +101,13 @@ if __name__ == '__main__':
     plt.xlabel("Number of Topics")
     plt.ylabel("Coherence Score")
     plt.legend(("coherence_values"), loc='best')
-    plt.show()    
-    
+    plt.show()
+
     # Saving the model
     pathmodel = '../Hackathon_eleven/Modelling/Models'
     if not os.path.exists(pathmodel):
         os.makedirs(pathmodel)
-    LDAmodel.save('../Hackathon_eleven/Modelling/Models/model_saved.lda')
+    LDAmodel.save('../Hackathon_eleven/Modelling/Models/model_saved.model')
+
+    # Saving the Dataframe
+    df_LDA.to_csv('../Hackathon_eleven/Modelling/Models/df_for_sentiment.csv')
