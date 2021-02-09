@@ -1,15 +1,13 @@
 # This must be run AFTER topicmodelinglda.py
 
 import string
-
+import pandas as pd
 import gensim
 from gensim.models import LdaMulticore
 from gensim.parsing.preprocessing import STOPWORDS
 from gensim.test.utils import datapath
 from gensim import corpora, models, similarities
 from gensim.models import CoherenceModel, LdaModel
-
-import pandas as pd
 
 
 # Definition of function to get the main topics : source https://www.machinelearningplus.com/nlp/topic-modeling-gensim-python/
