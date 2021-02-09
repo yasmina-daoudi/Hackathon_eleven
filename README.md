@@ -1,6 +1,6 @@
 # Eleven Supercase Airlines Sentiment Analysis
 
-Our goal is to analyze Airlines Customers Satisfaction using NLP Sentiment Analysis from Web Scrapped Data.
+Our goal is to analyze Airlines Customers Satisfaction, specifically Interior Services, using NLP Sentiment Analysis from Web Scraped Data.
 
 The major steps are the following :
 
@@ -11,7 +11,7 @@ The major steps are the following :
 
 
 
-Data:
+Reviews Data:
 	- Global market
 	- English-text reviews
 
