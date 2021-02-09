@@ -17,6 +17,7 @@ import nltk
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 import wordcloud
+import contractions
 
 # Loading of the reviews file
 file_path = "reviews_output.csv"
@@ -72,6 +73,9 @@ def nostopwordsandlemma(text):
     text = lemmatization(text)
     return text
 
+def expand_contractions(text):
+    text = contractions.fix(text)
+    return text
 
 if __name__ == '__main__':
     df_preprocessing = pd.read_csv(file_path)
@@ -88,8 +92,9 @@ if __name__ == '__main__':
     # some reviews have multiple languages inside
     df_noduplicates['review_language'] = [extract_mostprobablelanguage(x) for x in df_noduplicates['review_text']]
 
-    # Now we keep only the 'En' reviews and drop the multilingual ones
+    # Now we keep only the 'En' reviews and drop the multilingual ones, and expand the contracted words like "I'm"
     df_english = df_noduplicates[df_noduplicates['review_language'] == 'en'].reset_index(drop=True)
+    df_english['review_text'] = df_english['review_text'].map(lambda text: expand_contractions(text))
 
     # We create a list that will store all the words of the reviews
     list_of_words = []
