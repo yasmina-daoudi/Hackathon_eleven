@@ -1,5 +1,6 @@
 import pandas as pd
 import string
+import matplotlib.pyplot as plt
 
 import gensim
 from gensim.test.utils import datapath
@@ -91,10 +92,18 @@ if __name__ == '__main__':
     limit = 80
     start = 2
     step = 6
+    
     model_list, coherence_values = compute_coherence_values(dictionary=dict3grams, corpus=corpus3grams, texts=list(df_LDA['3grams']), start=start, limit=limit, step=step)
-    # Print the coherence scores
-    for m, cv in zip(range(2, 80, 6), coherence_values):
+    # Print the coherence scores & plot coherence against number of topics
+    for m, cv in zip(range(start, limit, step), coherence_values):
         print("Number of Topics =", m, " has Coherence Value of", round(cv, 4))
+    x = range(start, limit, step)
+    plt.plot(x, coherence_values)
+    plt.xlabel("Number of Topics")
+    plt.ylabel("Coherence Score")
+    plt.legend(("coherence_values"), loc='best')
+    plt.show()    
+    
     # Saving the model
     pathmodel = '../Hackathon_eleven/Modelling/Models'
     if not os.path.exists(pathmodel):
