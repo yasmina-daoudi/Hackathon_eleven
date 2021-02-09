@@ -74,6 +74,15 @@ def make_bigrams(texts):
 def make_trigrams(texts):
     return [trigram_mod[bigram_mod[doc]] for doc in texts]
 
+def emphazizes_scores(listofscores):
+    integerscores = [(-1 if x <-0.08 else (0 if -0.08 <= x <= 0.08 else 1)) for x in listofscores]
+    return integerscores
+
+def get_mode(lyst):
+    our_counter = Counter(lyst)
+    _,val = our_counter.most_common(1)[0]
+    return [x for x,y in our_counter.items() if y == val]
+
 def parsingsentencestokens(review):
     sent_tokens = []
     if type(review)!=str :
@@ -91,6 +100,44 @@ def remove_punc(sentences):
     clean_text = [s.translate(str.maketrans('', '', string.punctuation)) for s in sentences]
     return cleaned_text
 
+Dictionary_of_our_topics = {'0' : 'Topic1', '1' : 'Topic2', '2' : 'Topic3', '3' : 'Topic4', '4' : 'Topic5'}
+
+def scoring_all_reviews(number_of_reviews,dataframe):
+    score_topics = {Dictionary_of_our_topics[0]:[], Dictionary_of_our_topics[1]:[],
+                    Dictionary_of_our_topics[2]:[], Dictionary_of_our_topics[3]:[],
+                    Dictionary_of_our_topics[5]:[]}
+    ultimate_scores = {}
+
+    for i in number_of_reviews:
+        review_identifier_bool = dataframe['index_review'] == i
+        review_considerated = dataframe[review_identifier_bool]
+
+        for key in Dictionary_of_our_topics:
+            dataframe_topics = review_considerated[review_considerated['main_topic'] == Dictionary_of_our_topics[key]]  #get only relevant rows for the current topic
+
+            if len(dataframe_topics) == 0:
+                pass
+
+            else:
+                list_of_the_scores = list(dataframe_topics['integer_scores'])
+                list_of_modes = get_mode(list_of_the_scores)
+
+                if len(list_of_modes) ==1:
+                    sentiment = list_of_modes[0]
+
+                elif len(list_of_modes) >1:
+                    sentiment = 0
+                score_topics[Dictionary_of_our_topics[key]].append(sentiment)
+
+    for key in score_topics:
+        list_all_scores = score_topics[key]
+        positive_topics = list_all_scores.count(1)/len(list_all_scores)
+        neutral_topics = list_all_scores.count(0)/len(list_all_scores)
+        negative_topics = list_all_scores.count(-1)/len(list_all_scores)
+        aggregation_scores_topics = [round(positive_topics,3),round(neutral_topics,3),round(negative_topics,3)]
+        ultimate_scores[key] = aggregation_scores_topics
+
+    return ultimate_scores
 
 
 if __name__ == '__main__':
@@ -140,3 +187,21 @@ if __name__ == '__main__':
     df_topics_sentences_tokens['compound_score'] = df_topics_sentences_tokens['text'].map(lambda x: anakin.polarity_scores(x)['compound'])
     # Saving this
     df_topics_sentences_tokens.to_csv('../Hackathon_eleven/Recommendations/aggregation_sentences_compound_scores.csv')
+
+    # Some work on the scores (TO BE ADAPTED ACCORDING TO OUR DATASET)
+    # If we want to avoid central measures such as mode or median to give too neutral reviews,
+    # we have to emphazize extremes.
+    # Because we don't care about the scores themselves : we need to know if a review is
+    # positive, netural, or negative.
+    df_topics_sentences_tokens['integer_scores'] = emphazizes_scores(df_topics_sentences_tokens['compound_score'])
+    # VERY IMPORTANT : IF YOU CHANGED THE NUMBER OF TOPICS TO MORE THAN 5, PLEASE MODIFY
+    # THE scoring_all_reviews and modify accordingly 'Dictionary_of_our_topics' and
+    # 'score_topics'
+    number_of_reviews = list(df_topics_sentences_tokens['index_review'].unique())
+    # Passing on the function that will score all reviews
+    dictionary_with_sentiment_scores_topics = scoring_all_reviews(number_of_reviews,df_topics_sentences_tokens)
+    # Vizualisation
+    final_result_sentiment_topics = pd.DataFrame(dictionary_with_sentiment_scores_topics).T
+    final_result_sentiment_topics.columns = ['Positive Score','Neutral Score','Negative Score']
+    print(final_result_sentiment_topics)
+    # If someone could add plots
