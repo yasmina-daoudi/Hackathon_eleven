@@ -1,4 +1,5 @@
 # This must be run AFTER topicmodelinglda.py
+# AND before sentimentalanalysy.py
 
 import string
 import pandas as pd
