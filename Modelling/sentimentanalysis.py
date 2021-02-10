@@ -42,7 +42,7 @@ sns.set()
 # Then aggregate scores of all reviews by topic >> by type of sentiment
 
 
-def format_topics_sentences(dataframe, ldamodel=lda_model, corpus=corpus, documents=documents):
+def format_topics_sentences(df='dataframe', ldamodel='lda_model', corpus='corpus', documents='documents'):
     sent_topics_df = pd.DataFrame()
 
     # Get main topic in each document
@@ -62,7 +62,7 @@ def format_topics_sentences(dataframe, ldamodel=lda_model, corpus=corpus, docume
     sent_topics_df.columns = ['Dominant_Topic', 'Perc_Contribution', 'Topic_Keywords']
 
     # Add original text to the end of the output
-    raw_contents = pd.Series(dataframe[['sentences', 'sentences_as_tokens'])
+    raw_contents = pd.DataFrame(df[['sentences', 'sentences_as_tokens']])
     docus = pd.Series(documents)
     sent_topics_df = pd.concat([sent_topics_df, docus, raw_contents], axis=1)
     return sent_topics_df
@@ -83,37 +83,58 @@ def get_mode(lyst):
     _,val = our_counter.most_common(1)[0]
     return [x for x,y in our_counter.items() if y == val]
 
+nlp = spacy.load("en_core_web_sm")
+
 def parsingsentencestokens(review):
-    sent_tokens = []
+    sentences_tokens = []
     if type(review)!=str :
         print(type(review))
         return ""
-    text = expandContractions(review)
-    text = [word for word in text.split() if len(word)>1 and len(word) <= 45]
+    text = [word for word in review.split() if len(word)>1 and len(word) <= 45]
     parsed_text = ' '.join(word for word in text)
     doc = nlp(parsed_text)
     for i,sent in enumerate(doc.sents):
-        sent_tokens.append(sent.text)
+        sentences_tokens.append(sent.text)
     return sentences_tokens
 
 def remove_punc(sentences):
-    clean_text = [s.translate(str.maketrans('', '', string.punctuation)) for s in sentences]
+    cleaned_text = [s.translate(str.maketrans('', '', string.punctuation)) for s in sentences]
     return cleaned_text
 
-Dictionary_of_our_topics = {'0' : 'Topic1', '1' : 'Topic2', '2' : 'Topic3', '3' : 'Topic4', '4' : 'Topic5'}
+def remove_stopwords(doc):
+    words = [w for w in doc if w not in en_stopwords]
+    return words
 
-def scoring_all_reviews(number_of_reviews,dataframe):
-    score_topics = {Dictionary_of_our_topics[0]:[], Dictionary_of_our_topics[1]:[],
-                    Dictionary_of_our_topics[2]:[], Dictionary_of_our_topics[3]:[],
-                    Dictionary_of_our_topics[5]:[]}
+def lemmatizationspacy(bow,allowed_postags=['NOUN']):
+    lemmat_docu = nlp(" ".join(bow)) 
+    lemmat_text = [token.text if '_' in token.text else token.lemma_ if token.pos_ in allowed_postags else '' for token in lemmat_docu]
+    return lemmat_text
+    
+
+Dictionary_of_our_topics = {'0.0' : 'Topic1', '1.0' : 'Topic2', '2.0' : 'Topic3', '3.0' : 'Topic4', '4.0' : 'Topic5',
+                            '5.0' : 'Topic6', '6.0' : 'Topic7', '7.0' : 'Topic8', '8.0' : 'Topic9', '9.0' : 'Topic10', 
+                            '10.0' : 'Topic11', '11.0' : 'Topic12', '12.0' : 'Topic13', '13.0' : 'Topic14', '14.0' : 'Topic15',
+                            '15.0' : 'Topic16', '16.0' : 'Topic17', '17.0' : 'Topic18', '18.0' : 'Topic19', '19.0' : 'Topic20'}
+
+def scoring_all_reviews(list_of_all_reviews,dataframe):
+    score_topics = {Dictionary_of_our_topics['0.0']:[], Dictionary_of_our_topics['1.0']:[],
+                    Dictionary_of_our_topics['2.0']:[], Dictionary_of_our_topics['3.0']:[],
+                    Dictionary_of_our_topics['5.0']:[], Dictionary_of_our_topics['6.0']:[],
+                    Dictionary_of_our_topics['7.0']:[], Dictionary_of_our_topics['8.0']:[],
+                    Dictionary_of_our_topics['9.0']:[], Dictionary_of_our_topics['10.0']:[],
+                    Dictionary_of_our_topics['11.0']:[], Dictionary_of_our_topics['12.0']:[],
+                    Dictionary_of_our_topics['13.0']:[], Dictionary_of_our_topics['14.0']:[],
+                    Dictionary_of_our_topics['15.0']:[], Dictionary_of_our_topics['15.0']:[],
+                    Dictionary_of_our_topics['16.0']:[], Dictionary_of_our_topics['17.0']:[],
+                    Dictionary_of_our_topics['18.0']:[], Dictionary_of_our_topics['19.0']:[]}
     ultimate_scores = {}
 
-    for i in number_of_reviews:
+    for i in list_of_all_reviews:
         review_identifier_bool = dataframe['index_review'] == i
         review_considerated = dataframe[review_identifier_bool]
 
         for key in Dictionary_of_our_topics:
-            dataframe_topics = review_considerated[review_considerated['main_topic'] == Dictionary_of_our_topics[key]]  #get only relevant rows for the current topic
+            dataframe_topics = review_considerated[review_considerated['main_topic'] == Dictionary_of_our_topics[key]] 
 
             if len(dataframe_topics) == 0:
                 pass
@@ -141,7 +162,7 @@ def scoring_all_reviews(number_of_reviews,dataframe):
 
 
 if __name__ == '__main__':
-    ultimate_df = pd.read_csv('../Hackathon_eleven/Modelling/Models/topics_tokens.csv',index_col=0)
+    ultimate_df = pd.read_csv('../Hackathon_eleven/Modelling/Models/topics_tokens_sktrax.csv',index_col=0)
     LDA_model = LdaMulticore.load('../Hackathon_eleven/Modelling/Models/model_saved.model')
     # We store all the sentences and an index number to reconciliate scores by topic and review later, and facilitate aggregation for scores
     sentences_list = []
@@ -149,12 +170,12 @@ if __name__ == '__main__':
     df_sentences = pd.DataFrame()
     review_count = 0
     for review in ultimate_df['text']:
-        sentences_tokens = parse_sent_tokenize(review)
+        sentences_tokens = parsingsentencestokens(review)
         sentences_tokens = remove_punc(sentences_tokens)
-        big_sent_lst2.extend(sentences_tokens)
+        sentences_list.extend(sentences_tokens)
         review_count+=1
         review_num_lst = [str(review_count)] * len(sentences_tokens)
-        review_index_lst.extend(review_num_lst)
+        reviews_indices.extend(review_num_lst)
     df_sentences['sentences'] = sentences_list
     df_sentences['index_review'] = reviews_indices
     # We proceed to tokenization
@@ -167,7 +188,7 @@ if __name__ == '__main__':
     bigram_mod = gensim.models.phrases.Phraser(bigram)
     trigram_mod = gensim.models.phrases.Phraser(trigram)
     df_sentences['3grams'] = make_trigrams(df_sentences['sentokens_no_stopwords'])
-    df_sentences['3grams'] = df_sentences['3grams'].map(lambda x: spacy_lemma(x))
+    df_sentences['3grams'] = df_sentences['3grams'].map(lambda x: lemmatizationspacy(x))
     df_sentences['number_of_tokens'] = df_sentences['3grams'].map(lambda x: len(x))
     # We remove tokens smaller than 1
     last_df = df_sentences[df_sentences['number_of_tokens']>1].reset_index(drop=True)
@@ -176,17 +197,18 @@ if __name__ == '__main__':
     dict3grams = gensim.corpora.Dictionary(docu3grams)
     dict3grams.filter_extremes(no_below = 5,no_above=0.5)
     corpus3grams = [dict3grams.doc2bow(text) for text in docu3grams]
-    df_topics_sentences_tokens_in = format_topics_sentences(last_df,ldamodel=LDA_model, corpus=corpus3grams, documents=docu3grams)
+    df_topics_sentences_tokens_in = format_topics_sentences(df=last_df,ldamodel=LDA_model, corpus=corpus3grams, documents=docu3grams)
     df_topics_sentences_tokens = df_topics_sentences_tokens_in.reset_index()
     # We clean and add some infos on the tokens
     df_topics_sentences_tokens.columns = ['index', 'main_topic', 'percent_contribution_of_topic', 'keywords', 'tokens','text','sentence_tokens']
     df_topics_sentences_tokens['number_tokens']=last_df['number_of_tokens']
     df_topics_sentences_tokens['index_review']=last_df['index_review'].map(lambda x: int(x))
-    df_topics_sentences_tokens = df_topics_sentences_tokens[['index_review','main_topic','topic_perc_contrib','tokens','sentence_tokens','number_tokens','keywords','text']]
+    df_topics_sentences_tokens = df_topics_sentences_tokens[['index_review','main_topic','percent_contribution_of_topic','tokens','sentence_tokens','number_tokens','keywords','text']]
     # Finallyyyyy some sentiment analysis !
-    df_topics_sentences_tokens['compound_score'] = df_topics_sentences_tokens['text'].map(lambda x: anakin.polarity_scores(x)['compound'])
+    SentimentOhYeah = SentimentIntensityAnalyzer()
+    df_topics_sentences_tokens['compound_score'] = df_topics_sentences_tokens['text'].map(lambda x: SentimentOhYeah.polarity_scores(x)['compound'])
     # Saving this
-    df_topics_sentences_tokens.to_csv('../Hackathon_eleven/Recommendations/aggregation_sentences_compound_scores.csv')
+    df_topics_sentences_tokens.to_csv('../Hackathon_eleven/Recommendations/aggregation_sentences_compound_scores_SkyTrax.csv')
 
     # Some work on the scores (TO BE ADAPTED ACCORDING TO OUR DATASET)
     # If we want to avoid central measures such as mode or median to give too neutral reviews,
@@ -197,9 +219,9 @@ if __name__ == '__main__':
     # VERY IMPORTANT : IF YOU CHANGED THE NUMBER OF TOPICS TO MORE THAN 5, PLEASE MODIFY
     # THE scoring_all_reviews and modify accordingly 'Dictionary_of_our_topics' and
     # 'score_topics'
-    number_of_reviews = list(df_topics_sentences_tokens['index_review'].unique())
+    list_of_all_reviews = list(df_topics_sentences_tokens['index_review'].unique())
     # Passing on the function that will score all reviews
-    dictionary_with_sentiment_scores_topics = scoring_all_reviews(number_of_reviews,df_topics_sentences_tokens)
+    dictionary_with_sentiment_scores_topics = scoring_all_reviews(list_of_all_reviews,df_topics_sentences_tokens)
     # Vizualisation
     final_result_sentiment_topics = pd.DataFrame(dictionary_with_sentiment_scores_topics).T
     final_result_sentiment_topics.columns = ['Positive Score','Neutral Score','Negative Score']

@@ -82,12 +82,13 @@ if __name__ == '__main__':
     coherence_of_our_LDA = coherence_model_LDA.get_coherence()
     print('\nCoherence Score: ', coherence_of_our_LDA)
     # If we want to visualize the topics-keywords
-    #pyLDAvis.enable_notebook()
+    # pyLDAvis.enable_notebook() only if you run it inside a Jupyter
     vizualisation_topics = pyLDAvis.gensim.prepare(LDAmodel, corpus3grams, dict3grams)
     pathviz = '../Hackathon_eleven/Modelling/Vizualisation'
     if not os.path.exists(pathviz):
         os.makedirs(pathviz)
     pyLDAvis.save_html(vizualisation_topics, '../Hackathon_eleven/Modelling/Vizualisation/LDA_Model_Skytrax.html')
+
     # Tuning our LDA
     limit = 80
     start = 2
