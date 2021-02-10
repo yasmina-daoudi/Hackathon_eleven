@@ -22,7 +22,7 @@ import en_core_web_sm
 
 
 # Loading of the reviews file
-file_path = "../Hackathon_eleven/Text Processing/skytrax_reviews.csv"
+file_path = "../Hackathon_eleven/Web Scrapping/final_reviews.csv"
 
 
 # Initialiazing a Language Detector Pipeline in case reviews not in English
@@ -82,6 +82,7 @@ def nostopwordsandlemma(texts):
 
 if __name__ == '__main__':
     df_preprocessing = pd.read_csv(file_path, sep=',', index_col=0).reset_index()
+    df_preprocessing = df_preprocessing.drop(['airline'], axis=1)
 
     # First we compute the length of the reviews
     df_preprocessing['review_length'] = df_preprocessing['review'].map(lambda x: len(x.split()))
@@ -98,7 +99,7 @@ if __name__ == '__main__':
 
     # Now we keep only the 'En' reviews and drop the multilingual ones, and expand the contracted words like "I'm"
     df_english = df_noduplicates[df_noduplicates['review_language'] == 'en'].reset_index(drop=True)
-    df_english['review'] = df_english['review'].map(lambda text: contractions.fix(text))
+    #df_english['review'] = df_english['review'].map(lambda x: contractions.fix(x))
 
     # We create a list that will store all the words of the reviews
     list_of_words = []
