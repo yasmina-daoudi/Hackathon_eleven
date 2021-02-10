@@ -18,12 +18,15 @@ from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 import wordcloud
 import contractions
+import en_core_web_sm
+
 
 # Loading of the reviews file
-file_path = "yelp_reviews.csv"
+file_path = "../Hackathon_eleven/Text Processing/skytrax_reviews.csv"
+
 
 # Initialiazing a Language Detector Pipeline in case reviews not in English
-nlp = spacy.load("en_core_web_sm")
+nlp = en_core_web_sm.load()
 nlp.add_pipe(LanguageDetector(), name="language_detector", last=True)
 
 # Initialiazing the StopWords
@@ -78,7 +81,7 @@ def nostopwordsandlemma(texts):
 
 
 if __name__ == '__main__':
-    df_preprocessing = pd.read_csv(file_path, sep='|', index_col=0).reset_index()
+    df_preprocessing = pd.read_csv(file_path, sep=',', index_col=0).reset_index()
 
     # First we compute the length of the reviews
     df_preprocessing['review_length'] = df_preprocessing['review'].map(lambda x: len(x.split()))
@@ -118,7 +121,7 @@ if __name__ == '__main__':
     df_english['2grams'] = df_english['2grams'].map(lambda x: nostopwordsandlemma(x))
     df_english['3grams'] = df_english['3grams'].map(lambda x: nostopwordsandlemma(x))
 
-    df_english.to_csv('data_ready_LDA.csv')
+    df_english.to_csv('../Hackathon_eleven/Text Processing/data_ready_LDA_skytrax.csv')
 
 
 # We can generate our results in the form of WordClouds
