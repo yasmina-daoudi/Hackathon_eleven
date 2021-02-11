@@ -22,7 +22,7 @@ import en_core_web_sm
 
 
 # Loading of the reviews file
-file_path = "../Hackathon_eleven/Web Scrapping/final_reviews.csv"
+file_path = "../Hackathon_eleven/Web Scrapping/All_reviews_merged.csv"
 
 
 # Initialiazing a Language Detector Pipeline in case reviews not in English
@@ -112,11 +112,12 @@ if __name__ == '__main__':
 
     #lemmatise words
     #list_of_words_nopunc_lemma = [[word.text if '_' in word.text else word.lemma_ if word.pos_ == 'NOUN' else '' for word in nlp(" ".join(i for i in sublist))] for sublist in list_of_words_nopunc]
-    list_of_words_nopunc_lemma = [[word.text if '_' in word.text or word.pos_ == '-PRON-' else word.lemma_ for word in nlp(" ".join(i for i in sublist))] for sublist in list_of_words_nopunc]
-    
+    list_of_words_nopunc_lemma = [[word.text if '_' in word.text or 'PRON' in word.lemma_  else word.lemma_ for word in nlp(" ".join(i for i in sublist))] for sublist in list_of_words_nopunc]
+
+
     #remove stopwords
     list_of_words = [[word for word in sublist if word not in stop_stopwords] for sublist in list_of_words_nopunc_lemma]
-    print(list_of_words[4930])
+    #print(list_of_words[4930])
     # Taking inspiration from https://www.machinelearningplus.com/nlp/topic-modeling-gensim-python/
     # We create bigram/trigram models
 
