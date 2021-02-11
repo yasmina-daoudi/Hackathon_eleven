@@ -117,9 +117,10 @@ def lemmatizationspacy(bow, allowed_postags=['NOUN']):
     return lemmat_text
 
 
-Dictionary_of_our_topics = {'0.0': 'Customer Service', '1.0': 'Topic2', '2.0': 'Topic3', '3.0': 'Topic4', '4.0': 'Topic5',
-                            '5.0': 'Topic6', '6.0': 'Topic7', '7.0': 'Topic8', '8.0': 'Topic9', '9.0': 'Topic10',
-                            '10.0': 'Topic11'}
+Dictionary_of_our_topics = {'0.0': 'Basic Services & Entertainment', '1.0': 'Comfort', '2.0': 'Operating Conditions', 
+                            '3.0': 'Aircrafts Interior Design', '4.0': 'Aircrafts Interior Equipments',
+                            '5.0': 'Catering', '6.0': 'Human Experience', '7.0': 'Boarding Environment', 
+                            '8.0': 'Miscellaneous'}
 
 
 def scoring_all_reviews(list_of_all_reviews, dataframe):
@@ -127,8 +128,7 @@ def scoring_all_reviews(list_of_all_reviews, dataframe):
                     Dictionary_of_our_topics['2.0']: [], Dictionary_of_our_topics['3.0']: [],
                     Dictionary_of_our_topics['4.0']: [], Dictionary_of_our_topics['5.0']: [],
                     Dictionary_of_our_topics['6.0']: [], Dictionary_of_our_topics['7.0']: [],
-                    Dictionary_of_our_topics['8.0']: [], Dictionary_of_our_topics['9.0']: [],
-                    Dictionary_of_our_topics['10.0']: []}
+                    Dictionary_of_our_topics['8.0']: []}
     ultimate_scores = {}
 
     for i in list_of_all_reviews:
@@ -212,20 +212,21 @@ if __name__ == '__main__':
     # Saving this
     df_topics_sentences_tokens.to_csv('../Hackathon_eleven/Recommendations/aggregation_sentences_compound_scores.csv')
 
-    # Some work on the scores (TO BE ADAPTED ACCORDING TO OUR DATASET)
-    # If we want to avoid central measures such as mode or median to give too neutral reviews,
+    # Some work on the scores 
+    # If we want to avoid central measures such as mode or median to give too many neutral scores,
     # we have to emphazize extremes.
-    # Because we don't care about the scores themselves : we need to know if a review is
+    # In the end we don't care about the scores themselves : we need to know if a review is
     # positive, netural, or negative.
     df_topics_sentences_tokens['integer_scores'] = emphazizes_scores(df_topics_sentences_tokens['compound_score'])
-    # VERY IMPORTANT : IF YOU CHANGED THE NUMBER OF TOPICS TO MORE THAN 5, PLEASE MODIFY
+    # VERY IMPORTANT : IF YOU CHANGED THE NUMBER OF TOPICS TO MORE THAN 9, PLEASE MODIFY
     # THE scoring_all_reviews and modify accordingly 'Dictionary_of_our_topics' and
     # 'score_topics'
     list_of_all_reviews = list(df_topics_sentences_tokens['index_review'].unique())
-    # Passing on the function that will score all reviews
+    # Passing on the func that will score all reviews
     dictionary_with_sentiment_scores_topics = scoring_all_reviews(list_of_all_reviews, df_topics_sentences_tokens)
-    # Vizualisation
+    # Aggregating everything
     final_result_sentiment_topics = pd.DataFrame(dictionary_with_sentiment_scores_topics).T
     final_result_sentiment_topics.columns = ['Portion of Positive Scores', 'Portion of Neutral Scores', 'Portion of Negative Score']
     print(final_result_sentiment_topics)
+    final_result_sentiment_topics.to_csv('../Hackathon_eleven/Recommendations/Sentiments_per_topic.csv')
     # If someone could add plots
