@@ -83,7 +83,7 @@ def nostopwordsandlemma(texts):
 
 
 if __name__ == '__main__':
-    df_preprocessing = pd.read_csv(file_path, index_col=0, encoding="ISO-8859-1").reset_index()
+    df_preprocessing = pd.read_csv(file_path, sep='|', index_col=0, encoding="ISO-8859-1").reset_index()
 
     # First we compute the length of the reviews
     df_preprocessing['review_length'] = df_preprocessing['review'].map(lambda x: len(x.split()))
