@@ -62,13 +62,13 @@ if __name__ == '__main__':
     dict3grams.filter_extremes(no_below=4, no_above=0.4)
     corpus3grams = [dict3grams.doc2bow(w) for w in docs3grams]
     # Parameters of our model
-    num_topics = 25
+    num_topics = 9
     passes = 100
     eval_every = None
     # Call to the model
     LDAmodel = gensim.models.ldamulticore.LdaMulticore(corpus3grams, num_topics=num_topics, id2word=dict3grams, passes=passes, alpha='asymmetric', eval_every=eval_every)
     # The topics are...
-    listoftopics = LDAmodel.print_topics(num_topics=num_topics, num_words=12)
+    listoftopics = LDAmodel.print_topics(num_topics=num_topics, num_words=25)
     for i, element in enumerate(listoftopics):
         first_string = str(element[1])
         for char in "0123456789+*\".":
@@ -83,13 +83,11 @@ if __name__ == '__main__':
     coherence_of_our_LDA = coherence_model_LDA.get_coherence()
     print('\nCoherence Score: ', coherence_of_our_LDA)
     # If we want to visualize the topics-keywords
-    # pyLDAvis.enable_notebook() only if you run it inside a Jupyter
+    # FOR A REASON WE DO NOT UNDERSTAND, TO MAKE IT WORK, YOU NEED TO COPY PASTE THE HEAD AND BOTTOM OF THE 
+    # "right_java_script.html" in the LDA_Model_Final_Viz.html to make it work
     vizualisation_topics = pyLDAvis.gensim.prepare(LDAmodel, corpus3grams, dict3grams)
-    pathviz = '../Hackathon_eleven/Modelling/Vizualisation'
-    if not os.path.exists(pathviz):
-        os.makedirs(pathviz)
-    pyLDAvis.save_html(vizualisation_topics, '../Hackathon_eleven/Modelling/Vizualisation/LDA_Model_Skytrax.html')
-
+    pyLDAvis.save_html(vizualisation_topics, '../Hackathon_eleven/index.html')
+    
     # Tuning our LDA
     limit = 80
     start = 2
@@ -112,4 +110,4 @@ if __name__ == '__main__':
     LDAmodel.save('../Hackathon_eleven/Modelling/Models/model_saved.model')
 
     # Saving the Dataframe
-    df_LDA.to_csv('../Hackathon_eleven/Modelling/Models/df_for_sentiment_skytrax.csv')
+    df_LDA.to_csv('../Hackathon_eleven/Modelling/Models/df_for_sentiment_final.csv')

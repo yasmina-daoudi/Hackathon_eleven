@@ -40,11 +40,11 @@ def format_topics_sentences(ldamodel='lda_model', corpus='corpus', documents='do
 
 
 if __name__ == '__main__':
-    df_for_sentiment = pd.read_csv('../Hackathon_eleven/Modelling/Models/df_for_sentiment_skytrax.csv', index_col=0)
+    df_for_sentiment = pd.read_csv('../Hackathon_eleven/Modelling/Models/df_for_sentiment_final.csv', index_col=0)
     # We load the model
     LDA_model = LdaMulticore.load('../Hackathon_eleven/Modelling/Models/model_saved.model')
     # We only keep 2 columns
-    df_for_sentiment = df_for_sentiment[['review_text', '3grams']]
+    df_for_sentiment = df_for_sentiment[['review', '3grams']]
     # Some formatting : the strings of each cell into list again
     df_for_sentiment['review'] = df_for_sentiment['review'].map(lambda x: ''.join(c for c in x if c == '_' or c not in string.punctuation).split())
     df_for_sentiment['3grams'] = df_for_sentiment['3grams'].map(lambda x: ''.join(c for c in x if c == '_' or c not in string.punctuation).split())
@@ -63,4 +63,4 @@ if __name__ == '__main__':
     df_topics_tokens['number_unique_tokens'] = df_topics_tokens['unique_tokens'].map(lambda x: len(x) if hasattr(x, '__len__') else 0)
     df_topics_tokens = df_topics_tokens[['main_topic', 'text', 'percent_contribution_of_topic', 'tokens', 'number_tokens', 'unique_tokens', 'number_unique_tokens', 'keywords']]
     # We save the Dataframe
-    df_topics_tokens.to_csv('../Hackathon_eleven/Modelling/Models/topics_tokens_sktrax.csv')
+    df_topics_tokens.to_csv('../Hackathon_eleven/Modelling/Models/topics_tokens_final.csv')

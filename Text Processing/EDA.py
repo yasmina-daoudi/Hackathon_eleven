@@ -34,7 +34,8 @@ stop_stopwords = [s for s in set(STOPWORDS)]
 stop_stopwords.extend(['i', 'am', 'we', 'like', 'the','they', 'good', 'were', 'airline', '_', 'th', 'aircraft', 'swiss',
         'did', 'aeroflot', 'emirates', 'hop', 'iberia', 'klm', 'lufthansa', 'ryanair', "air", "airfrance", "france", "british", 
         "airways", "cdg", 'intl', 'virgin', 'atlantic', 'transavia', 'easyjet','vueling', 'southwest', 'united', 'airport',
-        'paris', 'orly', 'london', 'heathrow', 'mexico', 'airline', 'qatar', 'airways', 'tel', 'aviv', 'jet', 'honk', 'kong'])
+        'paris', 'orly', 'london', 'heathrow', 'mexico', 'airline', 'qatar', 'airways', 'tel', 'aviv', 'jet', 'honk', 'kong', 
+        'flight', 'plane', 'flights', 'airlines', 'fly', 'way', 'flew', 'ba', 'passengers', 'it', 'use', 'singapore', 'dubai', 'me', 'you', ''])
 stop_stopwords = [s for s in set(stop_stopwords)]
 
 # Definition of Functions used in our pipeline
@@ -105,16 +106,17 @@ if __name__ == '__main__':
     # We create a list that will store all the words of the reviews
     beg_list_of_words = []
     beg_list_of_words.extend([text.lower().split() for text in df_english['review']])
-    
-    #remove stopwords
-    list_of_words = [[word for word in sublist if word not in stop_stopwords] for sublist in beg_list_of_words]
 
     #remove punctuations from words and strip leading & trailing whitespaces
-    list_of_words_nopunc = [[re.sub(r'[^\w\s]', ' ', word).strip() for word in sublist] for sublist in list_of_words]
+    list_of_words_nopunc = [[re.sub(r'[^\w\s]', ' ', word).strip() for word in sublist] for sublist in beg_list_of_words]
 
     #lemmatise words
-    list_of_words_nopunc_lemma = [[word.lemma_ for word in nlp(" ".join(i for i in sublist))] for sublist in list_of_words_nopunc]
-
+    #list_of_words_nopunc_lemma = [[word.text if '_' in word.text else word.lemma_ if word.pos_ == 'NOUN' else '' for word in nlp(" ".join(i for i in sublist))] for sublist in list_of_words_nopunc]
+    list_of_words_nopunc_lemma = [[word.text if '_' in word.text or word.pos_ == '-PRON-' else word.lemma_ for word in nlp(" ".join(i for i in sublist))] for sublist in list_of_words_nopunc]
+    
+    #remove stopwords
+    list_of_words = [[word for word in sublist if word not in stop_stopwords] for sublist in list_of_words_nopunc_lemma]
+    print(list_of_words[4930])
     # Taking inspiration from https://www.machinelearningplus.com/nlp/topic-modeling-gensim-python/
     # We create bigram/trigram models
 

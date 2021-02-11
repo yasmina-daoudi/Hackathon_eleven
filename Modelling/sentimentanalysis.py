@@ -117,7 +117,7 @@ def lemmatizationspacy(bow, allowed_postags=['NOUN']):
     return lemmat_text
 
 
-Dictionary_of_our_topics = {'0.0': 'Topic1', '1.0': 'Topic2', '2.0': 'Topic3', '3.0': 'Topic4', '4.0': 'Topic5',
+Dictionary_of_our_topics = {'0.0': 'Customer Service', '1.0': 'Topic2', '2.0': 'Topic3', '3.0': 'Topic4', '4.0': 'Topic5',
                             '5.0': 'Topic6', '6.0': 'Topic7', '7.0': 'Topic8', '8.0': 'Topic9', '9.0': 'Topic10',
                             '10.0': 'Topic11', '11.0': 'Topic12', '12.0': 'Topic13', '13.0': 'Topic14', '14.0': 'Topic15',
                             '15.0': 'Topic16', '16.0': 'Topic17', '17.0': 'Topic18', '18.0': 'Topic19', '19.0': 'Topic20'}
@@ -169,7 +169,7 @@ def scoring_all_reviews(list_of_all_reviews, dataframe):
 
 
 if __name__ == '__main__':
-    ultimate_df = pd.read_csv('../Hackathon_eleven/Modelling/Models/topics_tokens_sktrax.csv', index_col=0)
+    ultimate_df = pd.read_csv('../Hackathon_eleven/Modelling/Models/topics_tokens_final.csv', index_col=0)
     LDA_model = LdaMulticore.load('../Hackathon_eleven/Modelling/Models/model_saved.model')
     # We store all the sentences and an index number to reconciliate scores by topic and review later, and facilitate aggregation for scores
     sentences_list = []
@@ -215,7 +215,7 @@ if __name__ == '__main__':
     SentimentOhYeah = SentimentIntensityAnalyzer()
     df_topics_sentences_tokens['compound_score'] = df_topics_sentences_tokens['text'].map(lambda x: SentimentOhYeah.polarity_scores(x)['compound'])
     # Saving this
-    df_topics_sentences_tokens.to_csv('../Hackathon_eleven/Recommendations/aggregation_sentences_compound_scores_SkyTrax.csv')
+    df_topics_sentences_tokens.to_csv('../Hackathon_eleven/Recommendations/aggregation_sentences_compound_scores.csv')
 
     # Some work on the scores (TO BE ADAPTED ACCORDING TO OUR DATASET)
     # If we want to avoid central measures such as mode or median to give too neutral reviews,
