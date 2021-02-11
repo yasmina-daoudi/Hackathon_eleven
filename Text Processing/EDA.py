@@ -31,7 +31,7 @@ nlp.add_pipe(LanguageDetector(), name="language_detector", last=True)
 
 # Initialiazing the StopWords
 stop_stopwords = [s for s in set(STOPWORDS)]
-stop_stopwords.extend(['I','i', 'am', 'we', 'We', 'like', 'the', 'The', 'They','they', 'good', 'were', 'airline', '_', 'th', 'aircraft', 'swiss',
+stop_stopwords.extend(['i', 'am', 'we', 'like', 'the','they', 'good', 'were', 'airline', '_', 'th', 'aircraft', 'swiss',
         'did', 'aeroflot', 'emirates', 'hop', 'iberia', 'klm', 'lufthansa', 'ryanair', "air", "airfrance", "france", "british", 
         "airways", "cdg", 'intl', 'virgin', 'atlantic', 'transavia', 'easyjet','vueling', 'southwest', 'united', 'airport',
         'paris', 'orly', 'london', 'heathrow', 'mexico', 'airline', 'qatar', 'airways', 'tel', 'aviv', 'jet', 'honk', 'kong'])
@@ -105,11 +105,15 @@ if __name__ == '__main__':
     # We create a list that will store all the words of the reviews
     beg_list_of_words = []
     beg_list_of_words.extend([text.lower().split() for text in df_english['review']])
-    list_of_words = []
-    for sublist in beg_list_of_words:
-        sublist_of_words = []
-        sublist_of_words = [word for word in sublist if word not in stop_stopwords]
-        list_of_words.append(sublist_of_words)
+    
+    #remove stopwords
+    list_of_words = [[word for word in sublist if word not in stop_stopwords] for sublist in beg_list_of_words]
+
+    #remove punctuations from words and strip leading & trailing whitespaces
+    list_of_words_nopunc = [[re.sub(r'[^\w\s]', ' ', word).strip() for word in sublist] for sublist in list_of_words]
+
+    #lemmatise words
+    list_of_words_nopunc_lemma = [[word.lemma_ for word in nlp(" ".join(i for i in sublist))] for sublist in list_of_words_nopunc]
 
     # Taking inspiration from https://www.machinelearningplus.com/nlp/topic-modeling-gensim-python/
     # We create bigram/trigram models
@@ -122,11 +126,6 @@ if __name__ == '__main__':
     # We run these models through all our text
     df_english['2grams'] = [bigram_model[list_of_words[i]] for i in range(len(list_of_words))]
     df_english['3grams'] = [trigram_model[bigram_model[list_of_words[i]]] for i in range(len(list_of_words))]
-
-    # Now that we have bigrams and trigrams,
-    # we remove the stopwords and we lemmatize
-    df_english['2grams'] = df_english['2grams'].map(lambda x: nostopwordsandlemma(x))
-    df_english['3grams'] = df_english['3grams'].map(lambda x: nostopwordsandlemma(x))
 
     df_english.to_csv('../Hackathon_eleven/Text Processing/data_ready_LDA_final.csv')
 
