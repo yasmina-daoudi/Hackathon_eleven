@@ -85,7 +85,7 @@ if __name__ == '__main__':
     # If we want to visualize the topics-keywords
     # FOR A REASON WE DO NOT UNDERSTAND, TO MAKE IT WORK, YOU NEED TO COPY PASTE THE HEAD AND BOTTOM OF THE 
     # "right_java_script.html" in the LDA_Model_Final_Viz.html to make it work
-    vizualisation_topics = pyLDAvis.gensim.prepare(LDAmodel, corpus3grams, dict3grams)
+    vizualisation_topics = pyLDAvis.gensim.prepare(LDAmodel, corpus3grams, dict3grams, sort_topics=False)
     pyLDAvis.save_html(vizualisation_topics, '../Hackathon_eleven/index.html')
     
     # Tuning our LDA

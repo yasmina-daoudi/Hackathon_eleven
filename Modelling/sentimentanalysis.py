@@ -119,8 +119,7 @@ def lemmatizationspacy(bow, allowed_postags=['NOUN']):
 
 Dictionary_of_our_topics = {'0.0': 'Customer Service', '1.0': 'Topic2', '2.0': 'Topic3', '3.0': 'Topic4', '4.0': 'Topic5',
                             '5.0': 'Topic6', '6.0': 'Topic7', '7.0': 'Topic8', '8.0': 'Topic9', '9.0': 'Topic10',
-                            '10.0': 'Topic11', '11.0': 'Topic12', '12.0': 'Topic13', '13.0': 'Topic14', '14.0': 'Topic15',
-                            '15.0': 'Topic16', '16.0': 'Topic17', '17.0': 'Topic18', '18.0': 'Topic19', '19.0': 'Topic20'}
+                            '10.0': 'Topic11'}
 
 
 def scoring_all_reviews(list_of_all_reviews, dataframe):
@@ -129,11 +128,7 @@ def scoring_all_reviews(list_of_all_reviews, dataframe):
                     Dictionary_of_our_topics['4.0']: [], Dictionary_of_our_topics['5.0']: [],
                     Dictionary_of_our_topics['6.0']: [], Dictionary_of_our_topics['7.0']: [],
                     Dictionary_of_our_topics['8.0']: [], Dictionary_of_our_topics['9.0']: [],
-                    Dictionary_of_our_topics['10.0']: [], Dictionary_of_our_topics['11.0']: [],
-                    Dictionary_of_our_topics['12.0']: [], Dictionary_of_our_topics['13.0']: [],
-                    Dictionary_of_our_topics['14.0']: [], Dictionary_of_our_topics['15.0']: [],
-                    Dictionary_of_our_topics['16.0']: [], Dictionary_of_our_topics['17.0']: [],
-                    Dictionary_of_our_topics['18.0']: [], Dictionary_of_our_topics['19.0']: []}
+                    Dictionary_of_our_topics['10.0']: []}
     ultimate_scores = {}
 
     for i in list_of_all_reviews:
