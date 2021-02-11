@@ -271,9 +271,9 @@ if __name__ == '__main__':
 
         ##### MERGING THREE DATAFRAMES
 
-        reviews_skytrax_final = reviews_skytrax[['airline', 'review']]
-        tripadvisor_dataframe_final = tripadvisor_dataframe[['airline', 'review']]
-        yelp_dataframe_final = yelp_dataframe[['airline', 'review']]
+        reviews_skytrax_final = reviews_skytrax[['review']]
+        tripadvisor_dataframe_final = tripadvisor_dataframe[['review']]
+        yelp_dataframe_final = yelp_dataframe[['review']]
         
         intermediate = tripadvisor_dataframe_final.append(reviews_skytrax_final, ignore_index = True) 
         final = intermediate.append(yelp_dataframe_final, ignore_index = True) 
