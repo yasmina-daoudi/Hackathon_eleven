@@ -18,17 +18,23 @@ from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 import wordcloud
 import contractions
+import en_core_web_sm
+
 
 # Loading of the reviews file
-file_path = "yelp_reviews.csv"
+file_path = "../Hackathon_eleven/Web Scrapping/final_reviews.csv"
+
 
 # Initialiazing a Language Detector Pipeline in case reviews not in English
-nlp = spacy.load("en_core_web_sm")
+nlp = en_core_web_sm.load()
 nlp.add_pipe(LanguageDetector(), name="language_detector", last=True)
 
 # Initialiazing the StopWords
 stop_stopwords = [s for s in set(STOPWORDS)]
-stop_stopwords.extend(['I','i', 'like', 'good', 'great', 'love'])
+stop_stopwords.extend(['I','i', 'am', 'we', 'We', 'like', 'the', 'The', 'They','they', 'good', 'were', 'airline', '_', 'th', 'aircraft', 'swiss',
+        'did', 'aeroflot', 'emirates', 'hop', 'iberia', 'klm', 'lufthansa', 'ryanair', "air", "airfrance", "france", "british", 
+        "airways", "cdg", 'intl', 'virgin', 'atlantic', 'transavia', 'easyjet','vueling', 'southwest', 'united', 'airport',
+        'paris', 'orly', 'london', 'heathrow', 'mexico', 'airline', 'qatar', 'airways', 'tel', 'aviv', 'jet', 'honk', 'kong'])
 stop_stopwords = [s for s in set(stop_stopwords)]
 
 # Definition of Functions used in our pipeline
@@ -76,9 +82,8 @@ def nostopwordsandlemma(texts):
     return texts
 
 
-
 if __name__ == '__main__':
-    df_preprocessing = pd.read_csv(file_path, sep='|', index_col=0).reset_index()
+    df_preprocessing = pd.read_csv(file_path, index_col=0, encoding="ISO-8859-1").reset_index()
 
     # First we compute the length of the reviews
     df_preprocessing['review_length'] = df_preprocessing['review'].map(lambda x: len(x.split()))
@@ -95,11 +100,16 @@ if __name__ == '__main__':
 
     # Now we keep only the 'En' reviews and drop the multilingual ones, and expand the contracted words like "I'm"
     df_english = df_noduplicates[df_noduplicates['review_language'] == 'en'].reset_index(drop=True)
-    df_english['review'] = df_english['review'].map(lambda text: contractions.fix(text))
+    df_english['review'] = df_english['review'].map(lambda x: contractions.fix(x))
 
     # We create a list that will store all the words of the reviews
+    beg_list_of_words = []
+    beg_list_of_words.extend([text.lower().split() for text in df_english['review']])
     list_of_words = []
-    list_of_words.extend([text.split() for text in df_english['review']])
+    for sublist in beg_list_of_words:
+        sublist_of_words = []
+        sublist_of_words = [word for word in sublist if word not in stop_stopwords]
+        list_of_words.append(sublist_of_words)
 
     # Taking inspiration from https://www.machinelearningplus.com/nlp/topic-modeling-gensim-python/
     # We create bigram/trigram models
@@ -118,33 +128,36 @@ if __name__ == '__main__':
     df_english['2grams'] = df_english['2grams'].map(lambda x: nostopwordsandlemma(x))
     df_english['3grams'] = df_english['3grams'].map(lambda x: nostopwordsandlemma(x))
 
-    df_english.to_csv('data_ready_LDA.csv')
+    df_english.to_csv('../Hackathon_eleven/Text Processing/data_ready_LDA_final.csv')
 
 
 # We can generate our results in the form of WordClouds
 list_of_2grams = []
 list_of_2grams.extend([i for i in df_english['2grams']])
+flat_list_of_2grams = [item for sublist in list_of_2grams for item in sublist]
+
 list_of_3grams = []
 list_of_3grams.extend([i for i in df_english['3grams']])
+flat_list_of_3grams = [item for sublist in list_of_3grams for item in sublist]
 
-strings_of_2grams = ' '.join(g for g in list_of_2grams)
+strings_of_2grams = ' '.join(g for g in flat_list_of_2grams)
 wordcloudimage_2grams = wordcloud.WordCloud(width = 1500, height=900, max_words = 80).generate(strings_of_2grams)
 plt.figure(figsize=(27,20))
 plt.imshow(wordcloudimage_2grams, interpolation='bilinear')
 plt.axis("off")
 plt.show()
 
-strings_of_3grams = ' '.join(g for g in list_of_3grams)
+strings_of_3grams = ' '.join(g for g in flat_list_of_3grams)
 wordcloudimage_3grams = wordcloud.WordCloud(width = 1500, height=900, max_words = 80).generate(strings_of_3grams)
 plt.figure(figsize=(27,20))
 plt.imshow(wordcloudimage_3grams, interpolation='bilinear')
 plt.axis("off")
 plt.show()
 
-frequency_2grams = nltk.FreqDist(list_of_2grams)
+frequency_2grams = nltk.FreqDist(flat_list_of_2grams)
 plt.figure(figsize=(29,10))
 frequency_2grams.plot(150,cumulative=False)
 
-frequency_3grams = nltk.FreqDist(list_of_3grams)
+frequency_3grams = nltk.FreqDist(flat_list_of_3grams)
 plt.figure(figsize=(29,10))
 frequency_3grams.plot(150,cumulative=False)

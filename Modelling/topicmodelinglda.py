@@ -8,6 +8,7 @@ from gensim import corpora, models, similarities
 from gensim.models import CoherenceModel, LdaModel, LdaMulticore
 
 # For vizualisation of the topics-keywords
+from IPython.core.display import HTML
 import pyLDAvis
 import pyLDAvis.gensim
 
@@ -47,11 +48,11 @@ def compute_coherence_values(dictionary, corpus, texts, limit, start=2, step=3):
 
 
 if __name__ == '__main__':
-    df_LDA = pd.read_csv('../Hackathon_eleven/Text Processing/data_ready_LDA.csv', index_col=0)
+    df_LDA = pd.read_csv('../Hackathon_eleven/Text Processing/data_ready_LDA_final.csv', index_col=0)
     # We only keep the 3 columns
-    df_LDA = df_LDA[['review_text', '2grams', '3grams']]
+    df_LDA = df_LDA[['review', '2grams', '3grams']]
     # Some formatting : the strings of each cell into list again
-    df_LDA['review_text'] = df_LDA['review_text'].map(lambda x: ''.join(c for c in x if c == '_' or c not in string.punctuation).split())
+    df_LDA['review'] = df_LDA['review'].map(lambda x: ''.join(c for c in x if c == '_' or c not in string.punctuation).split())
     df_LDA['2grams'] = df_LDA['2grams'].map(lambda x: ''.join(c for c in x if c == '_' or c not in string.punctuation).split())
     df_LDA['3grams'] = df_LDA['3grams'].map(lambda x: ''.join(c for c in x if c == '_' or c not in string.punctuation).split())
     # LDA Model
@@ -61,13 +62,13 @@ if __name__ == '__main__':
     dict3grams.filter_extremes(no_below=4, no_above=0.4)
     corpus3grams = [dict3grams.doc2bow(w) for w in docs3grams]
     # Parameters of our model
-    num_topics = 5
+    num_topics = 25
     passes = 100
     eval_every = None
     # Call to the model
     LDAmodel = gensim.models.ldamulticore.LdaMulticore(corpus3grams, num_topics=num_topics, id2word=dict3grams, passes=passes, alpha='asymmetric', eval_every=eval_every)
     # The topics are...
-    listoftopics = LDAmodel.print_topics(num_topics=num_topics, num_words=15)
+    listoftopics = LDAmodel.print_topics(num_topics=num_topics, num_words=12)
     for i, element in enumerate(listoftopics):
         first_string = str(element[1])
         for char in "0123456789+*\".":
@@ -82,12 +83,13 @@ if __name__ == '__main__':
     coherence_of_our_LDA = coherence_model_LDA.get_coherence()
     print('\nCoherence Score: ', coherence_of_our_LDA)
     # If we want to visualize the topics-keywords
-    pyLDAvis.enable_notebook()
+    # pyLDAvis.enable_notebook() only if you run it inside a Jupyter
     vizualisation_topics = pyLDAvis.gensim.prepare(LDAmodel, corpus3grams, dict3grams)
     pathviz = '../Hackathon_eleven/Modelling/Vizualisation'
     if not os.path.exists(pathviz):
         os.makedirs(pathviz)
-    pyLDAvis.save_html(vizualisation_topics, '../Hackathon_eleven/Modelling/Vizualisation/LDA_Model.html')
+    pyLDAvis.save_html(vizualisation_topics, '../Hackathon_eleven/Modelling/Vizualisation/LDA_Model_Skytrax.html')
+
     # Tuning our LDA
     limit = 80
     start = 2
@@ -110,4 +112,4 @@ if __name__ == '__main__':
     LDAmodel.save('../Hackathon_eleven/Modelling/Models/model_saved.model')
 
     # Saving the Dataframe
-    df_LDA.to_csv('../Hackathon_eleven/Modelling/Models/df_for_sentiment.csv')
+    df_LDA.to_csv('../Hackathon_eleven/Modelling/Models/df_for_sentiment_skytrax.csv')
