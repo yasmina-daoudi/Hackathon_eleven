@@ -202,7 +202,7 @@ if __name__ == '__main__':
     df_topics_sentences_tokens_in = format_topics_sentences(df=last_df, ldamodel=LDA_model, corpus=corpus3grams, documents=docu3grams)
     df_topics_sentences_tokens = df_topics_sentences_tokens_in.reset_index()
     # We clean and add some infos on the tokens
-    df_topics_sentences_tokens.columns = ['index', 'main_topic', 'percent_contribution_of_topic', 'keywords', 'tokens', 'text', 'sentence_tokens']
+    df_topics_sentences_tokens.columns = ['index_review', 'main_topic', 'percent_contribution_of_topic', 'keywords', 'tokens', 'text', 'sentence_tokens']
     df_topics_sentences_tokens['number_tokens'] = last_df['number_of_tokens']
     df_topics_sentences_tokens['index_review'] = last_df['index_review'].map(lambda x: int(x))
     df_topics_sentences_tokens = df_topics_sentences_tokens[['index_review', 'main_topic', 'percent_contribution_of_topic', 'tokens', 'sentence_tokens', 'number_tokens', 'keywords', 'text']]
@@ -229,4 +229,3 @@ if __name__ == '__main__':
     final_result_sentiment_topics.columns = ['Portion of Positive Scores', 'Portion of Neutral Scores', 'Portion of Negative Score']
     print(final_result_sentiment_topics)
     final_result_sentiment_topics.to_csv('../Hackathon_eleven/Recommendations/Sentiments_per_topic.csv')
-    # If someone could add plots
